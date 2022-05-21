@@ -1,5 +1,6 @@
 using System.Text;
 using DemoIdentityApp.API.Data;
+using DemoIdentityApp.API.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -24,6 +25,7 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
     options.Password.RequireDigit = false;
     options.Password.RequireUppercase = false;
     options.Password.RequiredUniqueChars = 1;
+    options.Password.RequireNonAlphanumeric = false;
 })
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
@@ -46,6 +48,9 @@ builder.Services.AddAuthentication(auth =>
     };
 });
 
+builder.Services.AddScoped<IUserService, UserService>();
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -55,7 +60,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
