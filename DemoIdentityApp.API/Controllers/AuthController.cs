@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using DemoIdentityApp.API.Services;
+using DemoIdentityApp.DAL;
 using DemoIdentityApp.DAL.ViewModels;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DemoIdentityApp.API.Controllers;
@@ -14,10 +16,12 @@ namespace DemoIdentityApp.API.Controllers;
 public class AuthController : ControllerBase
 {
     private readonly IUserService _userService;
+    private readonly IEmailSender _emailSender;
 
-    public AuthController(IUserService userService)
+    public AuthController(IUserService userService, IEmailSender emailSender)
     {
         _userService = userService;
+        _emailSender = emailSender;
     }
 
 
@@ -43,6 +47,11 @@ public class AuthController : ControllerBase
         var result = await _userService.LoginUserAsync(model);
 
         if (!result.IsSuccess) return BadRequest(result);
+
+        var subject = "new login";
+        var htmlMessage = EmailHelperView.NewLogin;
+            
+        await _emailSender.SendEmailAsync(model.Email, subject, htmlMessage);
         
         return Ok(result);
     }

@@ -1,8 +1,10 @@
 using System.Text;
 using DemoIdentityApp.API.Data;
 using DemoIdentityApp.API.Services;
+using DemoIdentityApp.API.Services.EmailService;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
@@ -49,6 +51,7 @@ builder.Services.AddAuthentication(auth =>
 });
 
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddTransient<IEmailSender, MailJetEmailSender>();
 
 
 var app = builder.Build();
